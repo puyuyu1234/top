@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="ja">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>今なら無料！ホモ診断</title>
+        <link
+            rel="preload"
+            href="https://fonts.googleapis.com/css?family=Noto+Sans+JP:400"
+            as="style"
+        />
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Noto+Sans+JP:400" />
+        <link rel="stylesheet" href="../style.css" />
+        <style>
+            #button_wrapper {
+                margin: 30px;
+                text-align: center;
+            }
+
+            #homoButton {
+                font-size: 200%;
+                color: #fff;
+                cursor: pointer;
+                padding: 15px 20px;
+                border-radius: 1000px;
+                background-color: rgb(9, 180, 55);
+            }
+
+            #homoButton:hover {
+                background-color: rgb(21, 192, 67);
+            }
+
+            svg {
+                fill: #fff;
+                width: 0.8em;
+                height: 0.8em;
+                top: calc(50% - 0.5em);
+            }
+        </style>
+    </head>
+
+    <body>
+        <h1>今なら無料！ホモ診断</h1>
+        <p>もしかして自分ってホモかも……？そんな疑問を今すぐ解決！</p>
+        <div id="button_wrapper">
+            <button id="homoButton">
+                今すぐホモ診断
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512">
+                    <!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.-->
+                    <path
+                        d="M310.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-192 192c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L242.7 256 73.4 86.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l192 192z"
+                    />
+                </svg>
+            </button>
+        </div>
+        <dialog id="homoDialog">
+            <p>かわいい男の子のちんちんを舐めたい？</p>
+            <button id="yesButton">はい</button>
+            <button id="noButton">いいえ</button>
+        </dialog>
+        <dialog id="homoDialog2">
+            <p>でも本当は？</p>
+            <button id="yesButton2">舐めたい</button>
+            <button id="noButton2">舐めたくない</button>
+        </dialog>
+    </body>
+    <script>
+        a = () => setTimeout(() => alert("あなたはホモです。"), 0);
+        homoButton.onclick = () => homoDialog.show();
+        yesButton.onclick = () => homoDialog.close(a());
+        yesButton2.onclick = () => homoDialog2.close(a());
+        noButton.onclick = () => homoDialog.close(0);
+        homoDialog.onclose = () => homoDialog.returnValue == 0 && homoDialog2.show();
+    </script>
+</html>
