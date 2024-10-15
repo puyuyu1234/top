@@ -13,7 +13,7 @@
         <link rel="stylesheet" href="../style.css" />
         <style>
             #button_wrapper {
-                margin: 30px;
+                margin: 30px 0px;
                 text-align: center;
             }
 
@@ -24,6 +24,11 @@
                 padding: 15px 20px;
                 border-radius: 1000px;
                 background-color: rgb(9, 180, 55);
+            }
+
+            #result {
+                padding: 30px 0px;
+                font-size: 150%;
             }
 
             #homoButton:hover {
@@ -52,6 +57,7 @@
                     />
                 </svg>
             </button>
+            <p id="result"></p>
         </div>
         <dialog id="homoDialog">
             <p>かわいい男の子のちんちんを舐めたい？</p>
@@ -65,7 +71,8 @@
         </dialog>
     </body>
     <script>
-        a = () => setTimeout(() => alert("あなたはホモです。"), 0);
+        a = () =>
+            setTimeout(() => (result.innerText = "🎉おめでとうございます!!🎉\nあなたはホモです!!"));
         homoButton.onclick = () => homoDialog.show();
         yesButton.onclick = () => homoDialog.close(a());
         yesButton2.onclick = () => homoDialog2.close(a());
