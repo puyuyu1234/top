@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="ja">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>AA画像化</title>
+        <link rel="stylesheet" href="../style.css" />
+        <link rel="stylesheet" href="style.css" />
+    </head>
+
+    <body>
+        <h1>AA画像化</h1>
+        <textarea id="originalTextarea"></textarea><br />
+        <div id="buttonSettingWrapper">
+            <button id="convertButton">変換</button>
+            <div id="settingWrapper">
+                <label>文字色：<input id="charColorInput" type="color" /></label><br />
+                <label>背景色：<input id="bgColorInput" type="color" value="#ffffff" /></label>
+                <label>背景透過：<input id="bgColorTransparentInput" type="checkbox" /></label
+                ><br />
+                <label>余白：<input id="marginInput" type="number" />px</label><br />
+            </div>
+        </div>
+        <div id="canvasWrapper"></div>
+        <button id="saveButton">保存</button>
+        <hr />
+        <p>Saitamaarフォントを使用させていただいております。</p>
+    </body>
+    <script src="main.js"></script>
+</html>
