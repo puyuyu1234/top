@@ -35,10 +35,18 @@ const readData = async () => {
         {
             const div = document.createElement("div");
             div.className = "opinion";
-            const n = `<p class="name">${1 + id} : ${name}</p>`;
-            const d = `<p class="date">${date.toLocaleString()}</p>`;
-            const t = `<p class="text">${text}</p>`;
-            div.innerHTML = `${n}${t}${d}`;
+            const n = document.createElement("p");
+            n.className = "name";
+            n.innerText = `${1 + id} : ${name}`;
+            const d = document.createElement("p");
+            d.className = "date";
+            d.innerText = date.toLocaleString();
+            const t = document.createElement("p");
+            t.className = "text";
+            t.innerText = text;
+            div.appendChild(n);
+            div.appendChild(t);
+            div.appendChild(d);
             board.appendChild(div);
         }
     });
