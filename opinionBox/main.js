@@ -41,3 +41,5 @@ sendButton.addEventListener("click", () => {
         writeData([nameInput.value, t]);
     }
 });
+
+readData()
