@@ -2,3 +2,18 @@ hr {
     border: none;
     border-top: 1px solid black;
 }
+
+div.opinion {
+    margin: 5px;
+    border-bottom: 1px solid #888;
+}
+
+p.name {
+    color: green;
+    font-size: 80%;
+}
+
+p.date {
+    color: #aaa;
+    font-size: 60%;
+}
