@@ -28,8 +28,11 @@ hr {
 
 canvas {
     width: calc(100% - 2px);
-    border: 1px solid black;
+    aspect-ratio: 1 / 1;
     image-rendering: pixelated;
+    object-fit: contain;
+    background-color: #f0f0f0;
+    border: 1px solid black;
 }
 
 #saveButton {
