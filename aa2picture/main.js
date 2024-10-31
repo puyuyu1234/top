@@ -14,7 +14,7 @@ const makeCanvas = () => {
     // サイズ測定
     {
         const lines = text.split("\n");
-        canvas.height = lines.length * 18 - 3 + marginH * 2;
+        canvas.height = lines.length * 18 - 2 + marginH * 2;
         context.font = "16px Saitamaar";
         let xMax = 0;
         text.split("\n").forEach((line) => {
@@ -25,7 +25,7 @@ const makeCanvas = () => {
             });
             xMax = Math.max(xMax, x);
         });
-        canvas.width = xMax - 1 + marginW * 2;
+        canvas.width = xMax + marginW * 2;
     }
 
     context.font = "16px Saitamaar";
