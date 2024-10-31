@@ -1,19 +1,20 @@
 "use strict";
 
-let canvas;
-convertButton.addEventListener("click", () => {
+const makeCanvas = () => {
     const text = originalTextarea.value;
     const charColor = charColorInput.value;
     const bgColor = bgColorInput.value;
     const isBgColorTransparent = bgColorTransparentInput.checked;
-    const margin = +marginInput.value;
+    const marginH = +marginHInput.value;
+    const marginW = +marginWInput.value;
+    const isPic8x = pic8xInput.checked;
 
-    canvas = document.createElement("canvas");
+    const canvas = document.createElement("canvas");
     const context = canvas.getContext("2d");
     // サイズ測定
     {
         const lines = text.split("\n");
-        canvas.height = lines.length * 18 - 3 + margin * 2;
+        canvas.height = lines.length * 18 - 3 + marginH * 2;
         context.font = "16px Saitamaar";
         let xMax = 0;
         text.split("\n").forEach((line) => {
@@ -24,10 +25,8 @@ convertButton.addEventListener("click", () => {
             });
             xMax = Math.max(xMax, x);
         });
-        canvas.width = xMax - 1 + margin * 2;
+        canvas.width = xMax - 1 + marginW * 2;
     }
-    const p = document.createElement("p");
-    p.innerText = `画像サイズ：${canvas.width} × ${canvas.height}`;
 
     context.font = "16px Saitamaar";
     context.textBaseline = "top";
@@ -37,9 +36,9 @@ convertButton.addEventListener("click", () => {
         context.fillRect(0, 0, 1000, 1000);
     }
     context.fillStyle = charColor;
-    let y = margin + 1;
+    let y = marginH + 1;
     text.split("\n").forEach((line) => {
-        let x = margin;
+        let x = marginW;
         line.split("").forEach((char) => {
             const tm = context.measureText(char);
             context.fillText(char, x, y, tm.width);
@@ -47,6 +46,22 @@ convertButton.addEventListener("click", () => {
         });
         y += 18;
     });
+
+    return [canvas, isPic8x ? 8 : 1];
+};
+
+let canvas;
+
+convertButton.addEventListener("click", () => {
+    const [c, scale] = makeCanvas();
+    canvas = document.createElement("canvas");
+    const w = (canvas.width = scale * c.width);
+    const h = (canvas.height = scale * c.height);
+    const ctx = canvas.getContext("2d");
+    ctx.imageSmoothingEnabled = false;
+    ctx.drawImage(c, 0, 0, w, h);
+    const p = document.createElement("p");
+    p.innerText = `画像サイズ：${canvas.width} × ${canvas.height}`;
 
     canvasWrapper.innerHTML = "";
     canvasWrapper.appendChild(p);
