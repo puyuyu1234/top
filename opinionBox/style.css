@@ -1,6 +1,26 @@
 textarea {
-    width: min(80vw, 30em);
+    width: min(90%, 30em);
     height: 10em;
+    vertical-align: top;
+}
+
+input {
+    width: min(90%, 15em);
+}
+
+#form {
+    margin: 1em;
+    padding: 1.5em;
+    background-color: #def;
+    border-radius: 8px;
+}
+
+#sendButton {
+    padding: 0.5em 2em;
+    margin-top: 2em;
+}
+
+#sendButton.sending {
 }
 
 hr {
@@ -25,4 +45,20 @@ p.date {
 
 p.text {
     white-space: pre;
+}
+
+.loadingLine {
+    height: 1lh;
+    background: linear-gradient(90deg, #eee 25%, #ddd 50%, #eee 75%);
+    background-size: 200% 100%;
+    animation: loading 1.5s infinite;
+}
+
+@keyframes loading {
+    0% {
+        background-position: -200% 0;
+    }
+    100% {
+        background-position: 200% 0;
+    }
 }
