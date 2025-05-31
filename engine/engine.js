@@ -822,7 +822,6 @@ class Input {
       this.pressedKeys.set(e.key, false);
     });
     target.addEventListener("pointerdown", (e) => {
-      e.preventDefault();
       this.pressedKeys.set("pointer" + 0, true);
     });
     target.addEventListener("pointerup", (e) => {

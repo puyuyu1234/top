@@ -52,20 +52,21 @@ class Player extends HitboxSpriteActor {
       }
       return;
     }
-    if (input.get("pointer0") > 0) {
-      const pointer = input.getPointer();
-      const tolerance = 5;
-      if (this.rect.centerX < pointer.x - tolerance) {
-        this.x += 1;
-        this.scaleX = 1;
-        this.animation.play("walk", false);
-      } else if (this.rect.centerX > pointer.x + tolerance) {
-        this.x -= 1;
-        this.scaleX = -1;
-        this.animation.play("walk", false);
-      } else {
-        this.animation.play("stand");
-      }
+
+    const isKeysPressed = (...keys) => {
+      return keys.some((key) => input.get(key) > 0);
+    };
+
+    if (isKeysPressed("ArrowRight", "d")) {
+      if (this.x + this.rect.width >= width) return; // 画面外に出ないようにする
+      this.x += 1;
+      this.scaleX = 1;
+      this.animation.play("walk", false);
+    } else if (isKeysPressed("ArrowLeft", "a")) {
+      if (this.x <= 0) return; // 画面外に出ないようにする
+      this.x -= 1;
+      this.scaleX = -1;
+      this.animation.play("walk", false);
     } else {
       this.animation.play("stand");
     }
@@ -87,12 +88,19 @@ class FallingEntity extends HitboxSpriteActor {
     super("entity", rect, hitboxRect);
     this.id = ID.next().value;
     this.level = level;
-    this.vx = 0;
     this.vy = 0;
     this.animation = /** @type {SpriteAnimationTrait} */ (this.addTrait(SpriteAnimationTrait));
     this.animation.add(new SpriteAnimation("apple", imgNosToRect([0], 16, 16)));
     this.animation.add(new SpriteAnimation("bomb", imgNosToRect([1], 16, 16)));
     this.fall = this._fall();
+
+    {
+      const randomVX = Math.floor(4 * Math.random() - 2);
+      const baseVX =
+        this.level < 50 ? 0 : this.level < 100 ? randomVX / 8 : this.level < 150 ? randomVX / 6 : randomVX / 4;
+      this.x -= baseVX * 30;
+      this.vx = baseVX;
+    }
   }
 
   update(input, camera) {
@@ -109,11 +117,9 @@ class FallingEntity extends HitboxSpriteActor {
     while (true) {
       // 最初ちょっと上に上がってから落下する
       // 速度はlevelに応じる
-      const baseVx = this.level < 100 ? 0 : Math.floor(4 * Math.random() - 2) / 4;
-      const ay = (this.level + 100) / 1024 / 4;
+      const ay = (this.level + 100) / 4096;
       this.vy = ay * -1.5;
       while (true) {
-        this.vx = baseVx;
         this.vy += ay;
         yield* this.wait(1);
       }
@@ -123,6 +129,8 @@ class FallingEntity extends HitboxSpriteActor {
   *wait(frame) {
     for (let i = 0; i < frame; i++) yield;
   }
+
+  handleCollision(player, scene) {}
 }
 
 class Apple extends FallingEntity {
@@ -130,12 +138,59 @@ class Apple extends FallingEntity {
     super(x, level);
     this.animation.play("apple");
   }
+
+  handleCollision(player, scene) {
+    this.update = () => {
+      if (this.time > 2) {
+        this.destroy();
+      }
+      this.time++;
+    };
+    scene.score += 10;
+  }
 }
 
 class Bomb extends FallingEntity {
   constructor(x, level) {
     super(x, level);
     this.animation.play("bomb");
+  }
+
+  handleCollision(player, scene) {
+    player.emit("dying");
+    this.update = () => {
+      if (this.time == 30) {
+        for (let i = 0; i < 100; i++) {
+          // 爆発エフェクト
+          new Particle(
+            this.rect.centerX + ((Math.random() * 2 - 1) * this.width) / 4,
+            this.rect.centerY + ((Math.random() * 2 - 1) * this.height) / 4,
+            (Math.random() * 2 - 1) * 6,
+            (Math.random() * 2 - 1) * 4
+          ).addTo(scene);
+          new Particle(
+            player.rect.centerX + ((Math.random() * 2 - 1) * player.width) / 2,
+            player.rect.centerY + ((Math.random() * 2 - 1) * player.height) / 4,
+            ((Math.random() * 2 - 1) * 8) / 8,
+            ((Math.random() * 2 - 1) * 4) / 8
+          ).addTo(scene);
+        }
+        this.x = -10000;
+      } else if (this.time == 60) {
+        new RectActor(new Rectangle(8, 24, 80, 16), "#999").addTo(scene);
+        const gameOver = new TextActor("Game Over", width / 2, 24, 16, "#000").addTo(scene);
+        new RectActor(new Rectangle(4, 44, 88, 16), "#999").addTo(scene);
+        const restartText = new TextActor("Tap to Restart", width / 2, 48, 12, "#000").addTo(scene);
+        gameOver.textAlign = "center";
+        restartText.textAlign = "center";
+        restartText.update = (input) => {
+          if (input.get("pointer0") == 1) {
+            scene.changeScene(new MainScene());
+          }
+        };
+      }
+      this.time++;
+    };
   }
 }
 
@@ -160,17 +215,39 @@ class Particle extends RectActor {
   }
 }
 
+class TreePart extends SpriteActor {
+  constructor(rect) {
+    super("entity", rect);
+    this.animation = /** @type {SpriteAnimationTrait} */ (this.addTrait(SpriteAnimationTrait));
+    this.animation.add(new SpriteAnimation("tree", imgNosToRect([2], 16, 16)));
+    this.animation.play("tree");
+  }
+}
+
+class Tree extends ContainerActor {
+  constructor() {
+    super();
+    new TreePart(new Rectangle(0, 32, 16, 16)).addTo(this);
+    new TreePart(new Rectangle(16, 32, 16, 16)).addTo(this).scaleX = -1;
+    new TreePart(new Rectangle(32, 16, 16, 16)).addTo(this).scaleX = -1;
+    new TreePart(new Rectangle(48, 16, 16, 16)).addTo(this);
+    new TreePart(new Rectangle(64, 32, 16, 16)).addTo(this);
+    new TreePart(new Rectangle(80, 32, 16, 16)).addTo(this).scaleX = -1;
+  }
+}
+
 class MainScene extends Scene {
   constructor() {
     super();
     new RectActor(new Rectangle(0, 0, width, height), "#999").addTo(this);
+    new Tree().addTo(this);
     this.player = new Player().addTo(this);
     this.score = 0;
     this.scoreText = new TextActor("", 2, 2, 12, "#000").addTo(this);
     this.scoreText.update = () => {
       this.scoreText.text = `Score: ${this.score}`;
     };
-    this.level = 0;
+    this.level = 550;
     /** @type {Map<number, FallingEntity>} */
     this.fallingEntities = new Map();
   }
@@ -197,48 +274,7 @@ class MainScene extends Scene {
         entity.time = 0;
         entity.y = this.player.hitboxRect.bottom - entity.rect.height;
         this.fallingEntities.delete(entity.id);
-        if (entity instanceof Apple) {
-          entity.update = () => {
-            if (entity.time > 2) {
-              entity.destroy();
-            }
-            entity.time++;
-          };
-          this.score += 10;
-        } else if (entity instanceof Bomb) {
-          this.player.emit("dying");
-          entity.update = () => {
-            if (entity.time == 30) {
-              for (let i = 0; i < 100; i++) {
-                // 爆発エフェクト
-                new Particle(
-                  entity.rect.centerX + ((Math.random() * 2 - 1) * entity.width) / 4,
-                  entity.rect.centerY + ((Math.random() * 2 - 1) * entity.height) / 4,
-                  (Math.random() * 2 - 1) * 6,
-                  (Math.random() * 2 - 1) * 4
-                ).addTo(this);
-                new Particle(
-                  this.player.rect.centerX + ((Math.random() * 2 - 1) * this.player.width) / 2,
-                  this.player.rect.centerY + ((Math.random() * 2 - 1) * this.player.height) / 4,
-                  ((Math.random() * 2 - 1) * 8) / 8,
-                  ((Math.random() * 2 - 1) * 4) / 8
-                ).addTo(this);
-              }
-              entity.x = -10000;
-            } else if (entity.time > 60) {
-              const gameOver = new TextActor("Game Over", width / 2, 24, 16, "#000").addTo(this);
-              const restartText = new TextActor("Tap to Restart", width / 2, 48, 12, "#000").addTo(this);
-              gameOver.textAlign = "center";
-              restartText.textAlign = "center";
-              restartText.update = () => {
-                if (input.get("pointer0") == 1) {
-                  this.changeScene(new MainScene());
-                }
-              };
-            }
-            entity.time++;
-          };
-        }
+        entity.handleCollision(this.player, this);
       }
     });
   }
@@ -248,7 +284,7 @@ class TitleScene extends Scene {
   constructor() {
     super();
     new RectActor(new Rectangle(0, 0, width, height), "#999").addTo(this);
-    const titleText = new TextActor("くだもの\nキャッチゲーム", width / 2, 32, 12, "#000").addTo(this);
+    const titleText = new TextActor("くだもの\nキャッチ", width / 2, 32, 12, "#000").addTo(this);
     titleText.textAlign = "center";
     titleText.update = (input) => {
       if (input.get("pointer0") == 1) {
@@ -268,6 +304,19 @@ class TitleScene extends Scene {
 document.addEventListener("DOMContentLoaded", () => {
   images.loadAll().then(() => {
     const game = new Game(width, height);
+
+    document.getElementById("left-button")?.addEventListener("pointerdown", () => {
+      game.canvas.dispatchEvent(new KeyboardEvent("keydown", { key: "ArrowLeft" }));
+    });
+    document.getElementById("left-button")?.addEventListener("pointerup", () => {
+      game.canvas.dispatchEvent(new KeyboardEvent("keyup", { key: "ArrowLeft" }));
+    });
+    document.getElementById("right-button")?.addEventListener("pointerdown", () => {
+      game.canvas.dispatchEvent(new KeyboardEvent("keydown", { key: "ArrowRight" }));
+    });
+    document.getElementById("right-button")?.addEventListener("pointerup", () => {
+      game.canvas.dispatchEvent(new KeyboardEvent("keyup", { key: "ArrowRight" }));
+    });
     game.changeScene(new TitleScene());
     game.start();
   });
