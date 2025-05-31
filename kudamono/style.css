@@ -1,6 +1,8 @@
+html,
 body {
   -webkit-touch-callout: none;
   -webkit-user-select: none;
+  touch-action: none;
 }
 
 canvas {
@@ -45,7 +47,6 @@ canvas {
   cursor: pointer;
   user-select: none;
   -webkit-user-select: none;
-  touch-action: manipulation;
   z-index: 100;
 
   /* 押下効果 */
