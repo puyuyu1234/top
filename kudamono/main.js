@@ -247,7 +247,7 @@ class MainScene extends Scene {
     this.scoreText.update = () => {
       this.scoreText.text = `Score: ${this.score}`;
     };
-    this.level = 550;
+    this.level = 0;
     /** @type {Map<number, FallingEntity>} */
     this.fallingEntities = new Map();
   }
