@@ -178,9 +178,9 @@ class Bomb extends FallingEntity {
         this.x = -10000;
       } else if (this.time == 60) {
         new RectActor(new Rectangle(8, 24, 80, 16), "#999").addTo(scene);
-        const gameOver = new TextActor("Game Over", width / 2, 24, 16, "#000").addTo(scene);
+        const gameOver = new TextActor("Game Over", width / 2, 24, 12, "#000", "p12").addTo(scene);
         new RectActor(new Rectangle(4, 44, 88, 16), "#999").addTo(scene);
-        const restartText = new TextActor("Tap to Restart", width / 2, 48, 12, "#000").addTo(scene);
+        const restartText = new TextActor("Tap to Restart", width / 2, 48, 10, "#000", "p10").addTo(scene);
         gameOver.textAlign = "center";
         restartText.textAlign = "center";
         restartText.update = (input) => {
@@ -243,7 +243,7 @@ class MainScene extends Scene {
     new Tree().addTo(this);
     this.player = new Player().addTo(this);
     this.score = 0;
-    this.scoreText = new TextActor("", 2, 2, 12, "#000").addTo(this);
+    this.scoreText = new TextActor("", 2, 2, 12, "#000", "p12").addTo(this);
     this.scoreText.update = () => {
       this.scoreText.text = `Score: ${this.score}`;
     };
@@ -284,14 +284,14 @@ class TitleScene extends Scene {
   constructor() {
     super();
     new RectActor(new Rectangle(0, 0, width, height), "#999").addTo(this);
-    const titleText = new TextActor("くだもの\nキャッチ", width / 2, 32, 12, "#000").addTo(this);
+    const titleText = new TextActor("くだもの\nキャッチ", width / 2, 32, 12, "#000", "p12").addTo(this);
     titleText.textAlign = "center";
     titleText.update = (input) => {
       if (input.get("pointer0") == 1) {
         this.changeScene(new MainScene());
       }
     };
-    const startText = new TextActor("Tap to Start", width / 2, 64, 10, "#000").addTo(this);
+    const startText = new TextActor("Tap to Start", width / 2, 64, 10, "#000", "p10").addTo(this);
     startText.textAlign = "center";
 
     const playerImage = new SpriteActor("player", new Rectangle(width / 2 - 12, 80, 24, 32)).addTo(this);
@@ -301,7 +301,21 @@ class TitleScene extends Scene {
   }
 }
 
-document.addEventListener("DOMContentLoaded", () => {
+const fonts = {
+  p10: new FontFace("p10", "url(../font/PixelMplus10-Regular.ttf)"),
+  p12: new FontFace("p12", "url(../font/PixelMplus12-Regular.ttf)"),
+};
+
+// 複数フォントを並列読み込み
+const loadFonts = async () => {
+  const promises = Object.values(fonts).map((font) => font.load());
+  const loadedFonts = await Promise.all(promises);
+  loadedFonts.forEach((font) => document.fonts.add(font));
+  return loadedFonts;
+};
+
+document.addEventListener("DOMContentLoaded", async () => {
+  await Promise.all([images.loadAll(), loadFonts()]);
   images.loadAll().then(() => {
     const game = new Game(width, height);
 
