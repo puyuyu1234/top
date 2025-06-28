@@ -1,7 +1,7 @@
 // @ts-check
 
-const width = 96;
-const height = 128;
+const width = 96 * 2;
+const height = 128 * 2;
 images.add("player", "../img/imomushi/player.gif");
 images.add("block", "../img/imomushi/block.gif");
 
