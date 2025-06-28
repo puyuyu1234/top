@@ -529,10 +529,10 @@ class SpriteActor extends Actor {
   render(target) {
     target.globalAlpha = this.alpha;
     target.save();
-    const centerX = this.rect.centerX | 0;
-    const centerY = this.rect.centerY | 0;
-    const x = (this.x - centerX) | 0;
-    const y = (this.y - centerY) | 0;
+    const centerX = this.rect.centerX;
+    const centerY = this.rect.centerY;
+    const x = (this.x | 0) - centerX;
+    const y = (this.y | 0) - centerY;
     target.translate(centerX, centerY);
     target.scale(this.scaleX, this.scaleY);
     target.drawImage(
