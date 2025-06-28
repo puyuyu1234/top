@@ -18,24 +18,22 @@ class BlockSprite {
   /**
    * @param {string} key
    * @param {number[]} imgNos
-   * @param {"no"|"needle"|"water"|"conR"|"conL"|"save"|"goal"|"entity"|"under"} type
    */
-  constructor(key, imgNos, type = "no", wall = { top: false, bottom: false, left: false, right: false }) {
+  constructor(key, imgNos, isWall = false) {
     this.key = key;
     this.imgNos = imgNos;
-    this.type = type;
-    this.wall = wall;
+    this.isWall = isWall;
   }
 }
 class EntitySprite extends BlockSprite {
   /**
    * @param {string} key
    * @param {number[]} imgNos
-   * @param {"entity"} type
+   * @param {boolean} isWall
    * @param {(...any)=>GameObject} creator
    */
-  constructor(key, imgNos, type, creator) {
-    super(key, imgNos, type);
+  constructor(key, imgNos, isWall, creator) {
+    super(key, imgNos, isWall);
     this.creator = creator;
   }
 }
@@ -43,94 +41,100 @@ class EntitySprite extends BlockSprite {
 const BLOCK_DATA = new Map(
   [
     new BlockSprite(" ", [0]),
-    new BlockSprite("0", [0]),
-    new BlockSprite("1", [1], "no", { top: true, bottom: true, left: true, right: true }),
-    new BlockSprite("2", [2], "no", { top: true, bottom: true, left: true, right: true }),
-    new BlockSprite("3", [3], "no", { top: true, bottom: true, left: true, right: true }),
-    new BlockSprite("4", [4], "no", { top: true, bottom: false, left: false, right: false }),
-    new BlockSprite("5", [5, 6, 8], "water"),
-    new BlockSprite("6", [7], "water"),
-
-    new BlockSprite("7", [8], "needle", { top: false, bottom: true, left: true, right: true }),
-    new BlockSprite("8", [9], "needle", { top: true, bottom: false, left: true, right: true }),
-    new BlockSprite("9", [10], "needle", { top: true, bottom: true, left: false, right: true }),
-    new BlockSprite("a", [11], "needle", { top: true, bottom: true, left: true, right: false }),
-    new BlockSprite("b", [12]),
-    new BlockSprite("c", [13]),
-    new BlockSprite("d", [14, 15, 8], "water"),
-
-    new BlockSprite("e", [16, 17, 18, 19, 2], "conR", { top: true, bottom: true, left: true, right: true }),
-    new BlockSprite("f", [20, 21, 22, 23, 2], "conR", { top: true, bottom: true, left: true, right: true }),
-    new BlockSprite("g", [24, 25, 26, 27, 2], "conR", { top: true, bottom: true, left: true, right: true }),
-    new BlockSprite("h", [28], "needle", { top: false, bottom: true, left: false, right: true }),
-    new BlockSprite("i", [29], "needle", { top: false, bottom: true, left: true, right: false }),
-    new BlockSprite("j", [30], "needle", { top: true, bottom: false, left: false, right: true }),
-    new BlockSprite("k", [31], "needle", { top: true, bottom: false, left: true, right: false }),
-
-    new BlockSprite("l", [32], "needle", { top: false, bottom: false, left: true, right: true }),
-    new BlockSprite("m", [33], "needle", { top: true, bottom: true, left: false, right: false }),
-    new BlockSprite("n", [34], "needle", { top: false, bottom: false, left: false, right: true }),
-    new BlockSprite("o", [35], "needle", { top: false, bottom: false, left: true, right: false }),
-    new BlockSprite("p", [36], "needle", { top: false, bottom: true, left: false, right: false }),
-    new BlockSprite("q", [37], "needle", { top: true, bottom: false, left: false, right: false }),
-    new BlockSprite("r", [38], "needle", { top: false, bottom: false, left: false, right: false }),
-
-    new BlockSprite("s", [42]),
-    new BlockSprite("t", [43]),
-    new BlockSprite("u", [47], "save"),
-    new BlockSprite("v", [50]),
-    new BlockSprite("w", [51]),
-    new BlockSprite("x", [55], "goal"),
-    new BlockSprite("y", [62]),
-
-    new BlockSprite("z", [64], "no", { top: false, bottom: true, left: false, right: false }),
-    new BlockSprite("A", [65], "no", { top: false, bottom: false, left: true, right: false }),
-    new BlockSprite("B", [-65], "no", { top: false, bottom: false, left: false, right: true }),
-    new BlockSprite("C", [68, 69, 70, 71, 2], "conL", { top: true, bottom: true, left: true, right: true }),
-    new BlockSprite("D", [72, 73, 74, 75, 2], "conL", { top: true, bottom: true, left: true, right: true }),
-    new BlockSprite("E", [76, 77, 78, 79, 2], "conL", { top: true, bottom: true, left: true, right: true }),
-
-    new BlockSprite("F", [80], "needle", { top: false, bottom: true, left: true, right: true }),
-    new BlockSprite("G", [81], "needle", { top: false, bottom: true, left: true, right: true }),
-    new BlockSprite("H", [82], "needle", { top: true, bottom: false, left: true, right: true }),
-    new BlockSprite("I", [83], "needle", { top: true, bottom: false, left: true, right: true }),
-    new BlockSprite("J", [84], "needle", { top: true, bottom: true, left: false, right: true }),
-    new BlockSprite("K", [85], "needle", { top: true, bottom: true, left: false, right: true }),
-    new BlockSprite("L", [86], "needle", { top: true, bottom: true, left: true, right: false }),
-    new BlockSprite("M", [87], "needle", { top: true, bottom: true, left: true, right: false }),
-
-    new BlockSprite("N", [88], "needle", { top: false, bottom: true, left: true, right: true }),
-    new BlockSprite("O", [89], "needle", { top: true, bottom: false, left: true, right: true }),
-    new BlockSprite("P", [90], "needle", { top: true, bottom: true, left: false, right: true }),
-    new BlockSprite("Q", [91], "needle", { top: true, bottom: true, left: true, right: false }),
-
-    new EntitySprite("R", [58], "entity", createMandra),
-    new EntitySprite("S", [59], "entity", createFallLift),
-    new EntitySprite("T", [92], "entity", createFallLift),
-    new EntitySprite("U", [96], "entity", createFallLift),
+    new BlockSprite("@", [0]),
+    new BlockSprite("0", [1], true),
+    new BlockSprite("1", [2]),
+    new BlockSprite("2", [3], true),
+    new BlockSprite("3", [4], true),
+    new BlockSprite("4", [5]),
+    new BlockSprite("5", [6]),
+    new BlockSprite("6", [7]),
+    new BlockSprite("7", [8], true),
+    new BlockSprite("8", [9], true),
+    new BlockSprite("9", [10], true),
+    new BlockSprite("A", [11], true),
+    new BlockSprite("B", [12], true),
+    new BlockSprite("C", [13]),
+    new BlockSprite("D", [14]),
+    new BlockSprite("E", [15]),
+    new BlockSprite("F", [16], true),
+    new BlockSprite("G", [17], true),
+    new BlockSprite("H", [18], true),
+    new BlockSprite("I", [19]),
+    new BlockSprite("J", [20]),
+    new BlockSprite("K", [21]),
+    new BlockSprite("L", [22]),
+    new BlockSprite("M", [23]),
+    new BlockSprite("N", [24], true),
+    new BlockSprite("O", [25], true),
+    new BlockSprite("P", [26], true),
+    new BlockSprite("Q", [27]),
+    new BlockSprite("R", [28]),
+    new BlockSprite("S", [29]),
+    new BlockSprite("T", [30]),
+    new BlockSprite("U", [31]),
+    new BlockSprite("V", [32]),
+    new BlockSprite("W", [33]),
+    new BlockSprite("X", [34]),
+    new BlockSprite("Y", [35]),
+    new BlockSprite("Z", [36]),
+    new BlockSprite("a", [37]),
+    new BlockSprite("b", [38]),
+    new BlockSprite("c", [39]),
+    new BlockSprite("d", [40]),
+    new BlockSprite("e", [41]),
+    new BlockSprite("f", [42]),
+    new BlockSprite("g", [43]),
+    new BlockSprite("h", [44]),
+    new BlockSprite("i", [45]),
+    new BlockSprite("j", [46]),
+    new BlockSprite("k", [47]),
+    new BlockSprite("l", [48]),
+    new BlockSprite("m", [49]),
+    new BlockSprite("n", [50]),
+    new BlockSprite("o", [51]),
+    new BlockSprite("p", [52]),
+    new BlockSprite("q", [53]),
+    new BlockSprite("r", [54]),
+    new BlockSprite("s", [55]),
+    new BlockSprite("t", [56]),
+    new BlockSprite("u", [57]),
+    new BlockSprite("v", [58]),
+    new BlockSprite("w", [59]),
+    new BlockSprite("x", [60]),
+    new BlockSprite("y", [61]),
+    new BlockSprite("z", [62]),
+    new BlockSprite("!", [63]),
   ].map((v) => [v.key, v])
 );
 
-/** @type {string[][][]} */
+/** @type {string[][]} */
 const STAGE_DATA = [
   [
-    ["st", "vw"],
-    [
-      "1RRRRRRRRR2222222221",
-      "3RRRRRRRRR        R3",
-      "3RRRRRRRRR        R3",
-      "3RRRRRRRRR        R3",
-      "3RRRRRRRRR        R3",
-      "3RRRRRRRRR        R3",
-      "3RRRRRRRRR   R R  R3",
-      "3RRRRRRRRR        R3",
-      "3         U U T T R3",
-      "3                 R3",
-      "3T T T T T   S S  R3",
-      "3                 R3",
-      "3            R R  R3",
-      "3 0               R3",
-      "12222222222222222221",
-    ],
+    "                 GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG",
+    "                 GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG",
+    "                 GGGGGGGGG2OOOOOO32OOOOOOOOOOOOOOOOOOOOOOOOOOOOO3GGGGGG",
+    "         GGGGGGGGGGGGGGGGGH  11  FH   111   111                 FGGGGGG",
+    "         GGGGGGGGGGGGGGGGGH  11  FH   111   111                 FGGGGGG",
+    "         GGGGGGG2OOOOOOOOOP  79  NP   111   111 00              FGGGGGG",
+    "         GGGGGGGHGGG2P   11  FH  11 II789   788889  46  46  46  FGGGGGG",
+    "    GGGGGGGGGGGGHGG2P    11  FH  11 QQFGH   FGGGGH  CE  CE  CE  FGGGGGG",
+    "    GGGGGGGGGGGGHG2P    78888BA8888888FGH   FGGGGH  CE  CE  CE 0FGGGGGG",
+    "    GGGGGGGGGGGGH2P    7GGGGGGGGGGGGGGFGH   FGGGGH0 KM  KM  KM00FGGGGGG",
+    "    GGGGGGGGGGGGHP    7FGG0000000000GGFGH   FGGGGH0           00FGGGGGG",
+    "    GGGGG2OOOO3GH    7BFGG0000000000GGFGH   FGGGGH00  00  0  000FGGGGGG",
+    "    GGGGGH    NOP   7BGFGG0000000000GGFGH   FGGGGA88888888888888BGGGGGG",
+    "    GGGGGH    111  7GGGFGGGGGGGGGGGGGGFGH   FGGGGGGGGGGGGGGGGGGGGGG    ",
+    "    GGGGGHIIII111  N3GGFG2OOOOOOOOOOOOFGH   FGGGGGGGGGGGGGGGGGGGGGG    ",
+    "    GGGGGHQQQQ789   N3GFGH            FGH   FGGGGGGGGGGGGGGGGGGGGGG    ",
+    "    GGGGGA8888BGH    N3FGH            FGH   FGGGGGGGGGGGG              ",
+    "    GGGGGGGGGGGGH9    NNOP   456  456 NOP   FGGG                       ",
+    "    GGGGGGGGGGGGHA9    111   KLM  KLM 111   FGGG                       ",
+    "    GGGGGGGGGGGGHGA9   111II @        111   FGGG                       ",
+    "    GGGGGGGGGGGGHGGA9  111QQ          111   FGGG                       ",
+    "    GGGGGGGGGGGGHGGGH  7888888888888888888888888                       ",
+    "         GGGGGGGHGGGH  FGGGGGGGGGGGGGGGGGGGGGGGG                       ",
+    "         GGGGGGGHGGGH79F000000000000000000000000                       ",
+    "         GGGGGGGHGGGHNPF000000000000000000000000                       ",
   ],
 ];

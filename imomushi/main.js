@@ -18,13 +18,13 @@ class HitboxSpriteActor extends SpriteActor {
 
 const imgNosToRect = (imgNos, width, height) => {
   return imgNos.map((imgNo) => {
-    const x = (imgNo % 4) * width;
-    const y = Math.floor(imgNo / 4) * height;
+    const x = (imgNo % 8) * width;
+    const y = Math.floor(imgNo / 8) * height;
     return new Rectangle(x, y, width, height);
   });
 };
 class Player extends ContainerActor {
-  constructor(bodyLength) {
+  constructor(bodyLength, x, y, stage) {
     super();
 
     /**
@@ -33,15 +33,15 @@ class Player extends ContainerActor {
     this.bodies = [
       ...Array(bodyLength)
         .fill()
-        .map((_, i) => new Body(i % 2).addTo(this)),
+        .map((_, i) => new Body(x, y, i % 2, stage).addTo(this)),
     ];
-    this.head = new Head().addTo(this);
+    this.head = new Head(x, y, stage).addTo(this);
     this.bodies.push(this.head);
   }
 
   update(input, camera) {
     super.update(input, camera);
-    const k = 10;
+    const k = 3;
     const directionLength = 4 * this.head.direction;
 
     for (let i = this.bodies.length - 1; i > 0; i--) {
@@ -53,21 +53,37 @@ class Player extends ContainerActor {
   }
 }
 class PlayerSpriteActor extends SpriteActor {
-  constructor(name, rect) {
+  constructor(name, rect, stage) {
     super(name, rect);
     this.vx = 0;
     this.vy = 0;
+    this.stage = stage;
   }
   update(input, camera) {
     super.update(input, camera);
+
+    this.vy += 1 / 8;
+    const isWall = (x, y) => {
+      const block = this.stage[Math.floor(y / BLOCK_SIZE)][Math.floor(x / BLOCK_SIZE)];
+      const blockData = BLOCK_DATA.get(block);
+      return blockData.isWall;
+    };
+    if (isWall(this.rect.centerX + this.vx, this.rect.centerY)) {
+      this.vx = 0;
+    }
+    if (isWall(this.rect.centerX + this.vx, this.rect.centerY + this.vy)) {
+      this.vy = 0;
+      this.vx /= 2;
+    }
+
     this.x += this.vx;
     this.y += this.vy;
   }
 }
 class Head extends PlayerSpriteActor {
-  constructor() {
-    const rect = new Rectangle(width / 2 - 12, 60, 16, 16);
-    super("player", rect);
+  constructor(x, y, stage) {
+    const rect = new Rectangle(x, y, 16, 16);
+    super("player", rect, stage);
     this.animation = /** @type {SpriteAnimationTrait} */ (this.addTrait(SpriteAnimationTrait));
     this.animation.add(new SpriteAnimation("head", imgNosToRect([0], 16, 16)));
     this.animation.play("head");
@@ -84,8 +100,8 @@ class Head extends PlayerSpriteActor {
     const k = 10;
     if (input.get("pointer0") > 0) {
       const pointer = input.getPointer();
-      this.vx = (pointer.x - this.rect.centerX) / k;
-      this.vy = (pointer.y - this.rect.centerY) / k;
+      this.vx = (pointer.x + camera.x - this.rect.centerX) / k;
+      this.vy = (pointer.y + camera.y - this.rect.centerY) / k;
     }
 
     if (this.vx > 0) {
@@ -96,21 +112,32 @@ class Head extends PlayerSpriteActor {
   }
 }
 class Body extends PlayerSpriteActor {
-  constructor(x) {
-    const rect = new Rectangle(0, 0, 16, 16);
-    super("player", rect);
+  constructor(x, y, i, stage) {
+    const rect = new Rectangle(x, y, 16, 16);
+    super("player", rect, stage);
     this.animation = /** @type {SpriteAnimationTrait} */ (this.addTrait(SpriteAnimationTrait));
-    this.animation.add(new SpriteAnimation("body", imgNosToRect([x + 1], 16, 16)));
+    this.animation.add(new SpriteAnimation("body", imgNosToRect([i + 1], 16, 16)));
     this.animation.play("body");
   }
 }
 
+class Block extends SpriteActor {
+  constructor(type, x, y) {
+    super("block", new Rectangle(x * BLOCK_SIZE, y * BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE));
+    this.animation = /** @type {SpriteAnimationTrait} */ (this.addTrait(SpriteAnimationTrait));
+    this.animation.add(new SpriteAnimation("#", imgNosToRect(BLOCK_DATA.get(type).imgNos, BLOCK_SIZE, BLOCK_SIZE)));
+    this.animation.play("#");
+  }
+}
+
 class MainScene extends Scene {
-  constructor() {
+  constructor(stageNum = 0) {
     super();
-    const bg = new RectActor(new Rectangle(0, 0, width, height), "#999").addTo(this);
+    const stage = STAGE_DATA[stageNum];
+    const bg = new RectActor(new Rectangle(-16, -16, width + 32, height + 32), "#999").addTo(this);
     bg.parallaxFactorX = bg.parallaxFactorY = 0;
-    this.player = new Player(bodyLength).addTo(this);
+    const { px, py } = this.renderStage(stage);
+    this.player = new Player(bodyLength, px, py, stage).addTo(this);
     this.text = new TextActor("", 0, 0, 10, "#000", "p10").addTo(this);
   }
 
@@ -121,10 +148,8 @@ class MainScene extends Scene {
   update(input, camera) {
     super.update(input, camera);
 
-    if (this.player.bodies.length != bodyLength + 1) {
-      this.player.destroy();
-      this.player = new Player(bodyLength).addTo(this);
-    }
+    camera.x = this.player.head.rect.centerX - width / 2;
+    camera.y = this.player.head.rect.centerY - height / 2;
 
     if (input.get("pointer0") == 1) {
       this.text.text = `x: ${input.getPointer().x.toFixed(2)}, y: ${input.getPointer().y.toFixed(2)}`;
@@ -142,6 +167,25 @@ class MainScene extends Scene {
     if (input.get("d") >= 1) {
       this.camera.x += 2;
     }
+  }
+
+  /**
+   * @param {string[]} stage
+   */
+  renderStage(stage) {
+    let px, py;
+    for (let h = 0; h < stage.length; h++) {
+      const line = stage[h];
+      for (let w = 0; w < line.length; w++) {
+        if (line[w] == "@") {
+          px = w * BLOCK_SIZE + BLOCK_SIZE / 2;
+          py = h * BLOCK_SIZE;
+          continue;
+        }
+        new Block(line[w], w, h).addTo(this);
+      }
+    }
+    return { px, py };
   }
 }
 
@@ -189,6 +233,3 @@ document.addEventListener("DOMContentLoaded", async () => {
 });
 
 let bodyLength = 5;
-document.getElementById("bodyLength").addEventListener("change", (e) => {
-  bodyLength = +e.target.value;
-});
