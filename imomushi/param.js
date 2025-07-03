@@ -19,61 +19,65 @@ class BlockSprite {
    * @param {string} key
    * @param {number[]} imgNos
    */
-  constructor(key, imgNos, isWall = false) {
+  constructor(key, imgNos, options = {}) {
     this.key = key;
     this.imgNos = imgNos;
-    this.isWall = isWall;
+    this.isWall = options.isWall || false;
   }
 }
 class EntitySprite extends BlockSprite {
   /**
    * @param {string} key
    * @param {number[]} imgNos
-   * @param {boolean} isWall
-   * @param {(...any)=>GameObject} creator
+   * @param {(x:number, y:number, stage:string[], imgNos:number[], parent:Actor)=>Actor} creator
    */
-  constructor(key, imgNos, isWall, creator) {
-    super(key, imgNos, isWall);
+  constructor(key, imgNos, creator) {
+    super(key, imgNos, {});
     this.creator = creator;
   }
 }
 
+const createSpider = (x, y, stage, imgNos, parent) => {
+  const spider = new Spider(x, y, stage, imgNos).addTo(parent);
+  new SpiderLeg(spider).addTo(parent);
+  return spider;
+};
+
 const BLOCK_DATA = new Map(
   [
     new BlockSprite(" ", [0]),
-    new BlockSprite("@", [0]),
-    new BlockSprite("0", [1], true),
+    new BlockSprite("0", [1], { isWall: true }),
     new BlockSprite("1", [2]),
-    new BlockSprite("2", [3], true),
-    new BlockSprite("3", [4], true),
+    new BlockSprite("2", [3], { isWall: true }),
+    new BlockSprite("3", [4], { isWall: true }),
     new BlockSprite("4", [5]),
     new BlockSprite("5", [6]),
     new BlockSprite("6", [7]),
-    new BlockSprite("7", [8], true),
-    new BlockSprite("8", [9], true),
-    new BlockSprite("9", [10], true),
-    new BlockSprite("A", [11], true),
-    new BlockSprite("B", [12], true),
+    new BlockSprite("7", [8], { isWall: true }),
+    new BlockSprite("8", [9], { isWall: true }),
+    new BlockSprite("9", [10], { isWall: true }),
+    new BlockSprite("A", [11], { isWall: true }),
+    new BlockSprite("B", [12], { isWall: true }),
     new BlockSprite("C", [13]),
     new BlockSprite("D", [14]),
     new BlockSprite("E", [15]),
-    new BlockSprite("F", [16], true),
-    new BlockSprite("G", [17], true),
-    new BlockSprite("H", [18], true),
+    new BlockSprite("F", [16], { isWall: true }),
+    new BlockSprite("G", [17], { isWall: true }),
+    new BlockSprite("H", [18], { isWall: true }),
     new BlockSprite("I", [19]),
     new BlockSprite("J", [20]),
     new BlockSprite("K", [21]),
     new BlockSprite("L", [22]),
     new BlockSprite("M", [23]),
-    new BlockSprite("N", [24], true),
-    new BlockSprite("O", [25], true),
-    new BlockSprite("P", [26], true),
+    new BlockSprite("N", [24], { isWall: true }),
+    new BlockSprite("O", [25], { isWall: true }),
+    new BlockSprite("P", [26], { isWall: true }),
     new BlockSprite("Q", [27]),
     new BlockSprite("R", [28]),
     new BlockSprite("S", [29]),
     new BlockSprite("T", [30]),
     new BlockSprite("U", [31]),
-    new BlockSprite("V", [32]),
+    new EntitySprite("V", [32], createSpider),
     new BlockSprite("W", [33]),
     new BlockSprite("X", [34]),
     new BlockSprite("Y", [35]),
@@ -105,36 +109,37 @@ const BLOCK_DATA = new Map(
     new BlockSprite("y", [61]),
     new BlockSprite("z", [62]),
     new BlockSprite("!", [63]),
+    new BlockSprite("@", [0]),
   ].map((v) => [v.key, v])
 );
 
 /** @type {string[][]} */
 const STAGE_DATA = [
   [
-    "                 GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG",
-    "                 GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG",
-    "                 GGGGGGGGG2OOOOOO32OOOOOOOOOOOOOOOOOOOOOOOOOOOOO3GGGGGG",
-    "         GGGGGGGGGGGGGGGGGH  11  FH   111   111                 FGGGGGG",
-    "         GGGGGGGGGGGGGGGGGH  11  FH   111   111                 FGGGGGG",
-    "         GGGGGGG2OOOOOOOOOP  79  NP   111   111 00              FGGGGGG",
-    "         GGGGGGGHGGG2P   11  FH  11 II789   788889  46  46  46  FGGGGGG",
-    "    GGGGGGGGGGGGHGG2P    11  FH  11 QQFGH   FGGGGH  CE  CE  CE  FGGGGGG",
-    "    GGGGGGGGGGGGHG2P    78888BA8888888FGH   FGGGGH  CE  CE  CE 0FGGGGGG",
-    "    GGGGGGGGGGGGH2P    7GGGGGGGGGGGGGGFGH   FGGGGH0 KM  KM  KM00FGGGGGG",
-    "    GGGGGGGGGGGGHP    7FGG0000000000GGFGH   FGGGGH0           00FGGGGGG",
-    "    GGGGG2OOOO3GH    7BFGG0000000000GGFGH   FGGGGH00  00  0  000FGGGGGG",
-    "    GGGGGH    NOP   7BGFGG0000000000GGFGH   FGGGGA88888888888888BGGGGGG",
-    "    GGGGGH    111  7GGGFGGGGGGGGGGGGGGFGH   FGGGGGGGGGGGGGGGGGGGGGG    ",
-    "    GGGGGHIIII111  N3GGFG2OOOOOOOOOOOOFGH   FGGGGGGGGGGGGGGGGGGGGGG    ",
-    "    GGGGGHQQQQ789   N3GFGH            FGH   FGGGGGGGGGGGGGGGGGGGGGG    ",
-    "    GGGGGA8888BGH    N3FGH            FGH   FGGGGGGGGGGGG              ",
-    "    GGGGGGGGGGGGH9    NNOP   456  456 NOP   FGGG                       ",
-    "    GGGGGGGGGGGGHA9    111   KLM  KLM 111   FGGG                       ",
-    "    GGGGGGGGGGGGHGA9   111II @        111   FGGG                       ",
-    "    GGGGGGGGGGGGHGGA9  111QQ          111   FGGG                       ",
-    "    GGGGGGGGGGGGHGGGH  7888888888888888888888888                       ",
-    "         GGGGGGGHGGGH  FGGGGGGGGGGGGGGGGGGGGGGGG                       ",
-    "         GGGGGGGHGGGH79F000000000000000000000000                       ",
-    "         GGGGGGGHGGGHNPF000000000000000000000000                       ",
+    "GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG",
+    "GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG",
+    "GGGGGGGGGGGGGGGGGGGGGG2OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO3GGGG",
+    "GGGGGGGGGGGGGGGGGGGGGGH  11  FH   1 1   1    1                               FGGGG",
+    "GGGGGGGGGGGGGGGGGGGGGGH  11  FH   1 1   1    1                               FGGGG",
+    "GGGGGGGGGGGG2OOOOOOOOOP  79  NP   1 1   1   01                               FGGGG",
+    "GGGGGGGGGGGGHPPP2P  1 1  FH  11 II789VVV788889  46  46  46  46  46  46  46   FGGGG",
+    "GGGGGGGGGGGGHPP2P   1 1  FH  11 QQFGHVVVF0GG0H  CE  CE  CE  CE  CE  CE  CE   FGGGG",
+    "GGGGGGGGGGGGHP2P    78888888888888FGHVVVFGGGGH  CE  CE  CE  CE  CE  CE  CE   FGGGG",
+    "GGGGG2OOOO3GH2P    7FGGGGGGGGGGGGGFGHVVVFGGGGH0 KM  KM  KM  KM  KM  KM  KM  0FGGGG",
+    "GGGGGH    FGHP    7BFG0000000000GGFGHVVVF0GG0H0               0             0FGGGG",
+    "GGGGGH    FGH    7BGFG0000000000GGFGHVVVFGGGGH00  00  0    0000    000     00FGGGG",
+    "GGGGGH    NOP   7BGGFG0000000000GGFGHVVV7888888888888888888888888888889111178BGGGG",
+    "GGGGGH    1 1  7GGGGFGGGGGGGGGGGGGFGHVVVF0GGGGGG0GGGGGG0GGGGGG0GGGGGG0H    FGGGGGG",
+    "GGGGGH III1 1  NOOOONOOOOOOOOOOOOOFGHVVVFGGGGGGGGGGGGGGGGGGGGGGGGGGGGGH    FGGGGGG",
+    "GGGGGH QQQ789   N3GGFH            FGHVVVFGGGGGGGGGGGGGGGGGGGGGGGGGGGGGHGGGGFGGGGGG",
+    "GGGGGA8888BGH    N3GFH            FGHVVVFGGGGGGGGGGGGGGGGGGGGGGGGGGGGGH    FGGGGGG",
+    "GGGGGGGG79GGH9    NONP   456  456 NOP   FGGGGGGGGGGGGGGGGGGGGGGGGGGGGGH    FGGGGGG",
+    "GGGGGGGGNPGGHA9   1  1   KLM  KLM 1 1   FGGGGGGGGGGGGGGGGGGGGGGGGGGGGGH    FGGGGGG",
+    "GGGGGGGGGGGGH9A9  1  1II          1 1   F0GGGGGG0GGGGGG0GGGGGG0GGGGGG0H    FGGGGGG",
+    "GGGGGGGGGGGGH99A9 1  1QQ @        1 1   FGGGGGGGGGGGGGGGGGGGGGGGGGGGGGH    FGGGGGG",
+    "GGGGGGGGGGGGH8888888888888888888888888888888                                      ",
+    "GGGGGGGGGGGGHGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG                                      ",
+    "GGGGGGGGGGGGHGGGG79G000000000000000000000000                                      ",
+    "GGGGGGGGGGGGHGGGGNPG000000000000000000000000                                      ",
   ],
 ];
