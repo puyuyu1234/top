@@ -9,13 +9,9 @@ import {
 import { WIDTH, HEIGHT, getGame } from './index'
 import type { BaseScene } from './scenes'
 
-// デバッグ用ヒットボックス表示フラグ
-export const DEBUG_HITBOX = false
-
 // ヒットボックス付きアクター
 export class HitboxActor extends AnimatedSpriteActor {
   hitbox: { x: number; y: number; width: number; height: number }
-  debugGraphics: Graphics | null = null
   vx = 0
   vy = 0
   time = 0
@@ -27,23 +23,13 @@ export class HitboxActor extends AnimatedSpriteActor {
     hitbox: { x: number; y: number; width: number; height: number },
     tags: string[] = [],
     anchorX = 0.5,
-    anchorY = 0.5,
-    debugColor: number = 0xff0000
+    anchorY = 0.5
   ) {
     super(imageKey, x, y, width, height, tags, anchorX, anchorY)
     this.hitbox = hitbox
-
-    // デバッグ用ヒットボックス表示
-    if (DEBUG_HITBOX) {
-      this.debugGraphics = new Graphics()
-      this.debugGraphics.rect(0, 0, hitbox.width, hitbox.height)
-      this.debugGraphics.stroke({ width: 1, color: debugColor, alpha: 0.8 })
-      this.addChild(this.debugGraphics)
-    }
   }
 
   get hitboxRect() {
-    // ヒットボックスの位置を計算
     const spriteLeft = this.x - this.width * this.anchor.x
     return {
       x: spriteLeft + this.hitbox.x,
@@ -57,13 +43,6 @@ export class HitboxActor extends AnimatedSpriteActor {
   tick() {
     super.tick()
     this.time++
-    // デバッグ用ヒットボックス
-    if (this.debugGraphics) {
-      const rect = this.hitboxRect
-      this.debugGraphics.x = (rect.x - this.x) / this.scale.x
-      this.debugGraphics.y = rect.y - this.y
-      this.debugGraphics.scale.x = 1 / this.scale.x
-    }
   }
 
   intersects(other: HitboxActor): boolean {
@@ -84,8 +63,7 @@ export class Player extends HitboxActor {
       12, 80, 24, 32,
       { x: 4, y: 0, width: 16, height: 4 },
       ['player'],
-      0.5, 0, // anchor
-      0x00ff00
+      0.5, 0 // anchor
     )
     this.playAnimation('stand')
   }
@@ -136,14 +114,13 @@ export class FallingEntity extends HitboxActor {
   level: number
   private fallGen: Generator
 
-  constructor(x: number, level: number, debugColor: number = 0xff0000) {
+  constructor(x: number, level: number) {
     super(
       'entity',
       x - 8, 0, 16, 16,
       { x: 3, y: 12, width: 10, height: 4 },
       ['entity'],
-      0, 0,
-      debugColor
+      0, 0
     )
     this.id = entityId++
     this.level = level
@@ -183,51 +160,82 @@ export class FallingEntity extends HitboxActor {
 
 // りんご
 export class Apple extends FallingEntity {
+  private caught = false
+
   constructor(x: number, level: number) {
-    super(x, level, 0x0000ff)
+    super(x, level)
     this.playAnimation('apple')
   }
 
   handleCollision(_player: Player, scene: BaseScene) {
+    if (this.caught) return
+    this.caught = true
+    this.time = 0
     scene.addScore(10)
-    this.destroy()
+  }
+
+  tick() {
+    if (this.caught) {
+      // 3フレーム待ってからdestroy（元のコードと同じ）
+      if (this.time > 2) {
+        this.destroy()
+      }
+      this.time++
+      return
+    }
+    super.tick()
   }
 }
 
 // 爆弾
 export class Bomb extends FallingEntity {
-  private exploded = false
+  private isHit = false
+  private playerRef: Player | null = null
+  private sceneRef: BaseScene | null = null
 
   constructor(x: number, level: number) {
-    super(x, level, 0xff0000)
+    super(x, level)
     this.playAnimation('bomb')
   }
 
   handleCollision(player: Player, scene: BaseScene) {
-    if (this.exploded) return
-    this.exploded = true
+    if (this.isHit) return
+    this.isHit = true
+    this.time = 0
+    this.playerRef = player
+    this.sceneRef = scene
     player.die()
-    this.visible = false
+  }
 
-    // 爆発エフェクト予約
-    setTimeout(() => {
-      for (let i = 0; i < 100; i++) {
-        scene.addParticle(
-          this.x + this.width / 2 + (Math.random() * 2 - 1) * 4,
-          this.y + this.height / 2 + (Math.random() * 2 - 1) * 4,
-          (Math.random() * 2 - 1) * 6,
-          (Math.random() * 2 - 1) * 4
-        )
-        scene.addParticle(
-          player.x + player.width / 2 + (Math.random() * 2 - 1) * 12,
-          player.y + player.height / 2 + (Math.random() * 2 - 1) * 8,
-          (Math.random() * 2 - 1),
-          (Math.random() * 2 - 1) * 0.5
-        )
+  tick() {
+    if (this.isHit) {
+      if (this.time === 30) {
+        // 30フレームで爆発エフェクト
+        const player = this.playerRef!
+        const scene = this.sceneRef!
+        for (let i = 0; i < 100; i++) {
+          scene.addParticle(
+            this.x + this.width / 2 + (Math.random() * 2 - 1) * 4,
+            this.y + this.height / 2 + (Math.random() * 2 - 1) * 4,
+            (Math.random() * 2 - 1) * 6,
+            (Math.random() * 2 - 1) * 4
+          )
+          scene.addParticle(
+            player.x + (Math.random() * 2 - 1) * 12,
+            player.y + player.height / 2 + (Math.random() * 2 - 1) * 8,
+            (Math.random() * 2 - 1),
+            (Math.random() * 2 - 1) * 0.5
+          )
+        }
+        this.x = -10000 // 画面外に移動
+      } else if (this.time === 60) {
+        // 60フレームでゲームオーバー
+        this.sceneRef!.showGameOver()
       }
-      scene.showGameOver()
-      this.destroy()
-    }, 500)
+      this.time++
+      return
+    }
+    super.tick()
   }
 }
 

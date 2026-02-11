@@ -10,22 +10,22 @@ importers:
     dependencies:
       '@puyuyu1234/ptre':
         specifier: github:puyuyu1234/ptre
-        version: git+https://git@github.com:puyuyu1234/ptre.git#32c1844b975f35233dac2572720a225cf8cf3e06(pixi.js@8.16.0)
+        version: git+https://git@github.com:puyuyu1234/ptre.git#953ece0459cd5fb9b96a20302c1a44f50d218dc4(pixi.js@8.16.0)
       pixi.js:
         specifier: ^8.16.0
         version: 8.16.0
       vue:
-        specifier: ^3.5.13
+        specifier: ^3.5.28
         version: 3.5.28(typescript@5.6.3)
       vue-router:
-        specifier: ^4.5.0
+        specifier: ^4.6.4
         version: 4.6.4(vue@3.5.28(typescript@5.6.3))
     devDependencies:
       '@tailwindcss/vite':
         specifier: ^4.1.18
         version: 4.1.18(vite@6.4.1(jiti@2.6.1)(lightningcss@1.30.2))
       '@vitejs/plugin-vue':
-        specifier: ^5.2.1
+        specifier: ^5.2.4
         version: 5.2.4(vite@6.4.1(jiti@2.6.1)(lightningcss@1.30.2))(vue@3.5.28(typescript@5.6.3))
       tailwindcss:
         specifier: ^4.1.18
@@ -34,10 +34,10 @@ importers:
         specifier: ~5.6.3
         version: 5.6.3
       vite:
-        specifier: ^6.0.7
+        specifier: ^6.4.1
         version: 6.4.1(jiti@2.6.1)(lightningcss@1.30.2)
       vue-tsc:
-        specifier: ^2.2.0
+        specifier: ^2.2.12
         version: 2.2.12(typescript@5.6.3)
 
 packages:
@@ -234,8 +234,8 @@ packages:
   '@pixi/colord@2.9.6':
     resolution: {integrity: sha512-nezytU2pw587fQstUu1AsJZDVEynjskwOL+kibwcdxsMBFqPsFFNA7xl0ii/gXuDi6M0xj3mfRJj8pBSc2jCfA==}
 
-  '@puyuyu1234/ptre@git+https://git@github.com:puyuyu1234/ptre.git#32c1844b975f35233dac2572720a225cf8cf3e06':
-    resolution: {commit: 32c1844b975f35233dac2572720a225cf8cf3e06, repo: git@github.com:puyuyu1234/ptre.git, type: git}
+  '@puyuyu1234/ptre@git+https://git@github.com:puyuyu1234/ptre.git#953ece0459cd5fb9b96a20302c1a44f50d218dc4':
+    resolution: {commit: 953ece0459cd5fb9b96a20302c1a44f50d218dc4, repo: git@github.com:puyuyu1234/ptre.git, type: git}
     version: 0.2.0
     peerDependencies:
       pixi.js: ^8.0.0
@@ -916,7 +916,7 @@ snapshots:
 
   '@pixi/colord@2.9.6': {}
 
-  '@puyuyu1234/ptre@git+https://git@github.com:puyuyu1234/ptre.git#32c1844b975f35233dac2572720a225cf8cf3e06(pixi.js@8.16.0)':
+  '@puyuyu1234/ptre@git+https://git@github.com:puyuyu1234/ptre.git#953ece0459cd5fb9b96a20302c1a44f50d218dc4(pixi.js@8.16.0)':
     dependencies:
       pixi.js: 8.16.0
 

@@ -1,4 +1,4 @@
-import { Game, AssetLoader } from '@puyuyu1234/ptre'
+import { Game, AssetLoader, GameFactory } from '@puyuyu1234/ptre'
 import { TitleScene } from './scenes'
 
 export const WIDTH = 96
@@ -21,13 +21,11 @@ export async function startGame(container: HTMLElement): Promise<Game> {
   canvas.id = 'kudamono-canvas'
   container.appendChild(canvas)
 
-  // AssetLoader を先に初期化（basePathを正しく設定するため）
-  assetLoader = AssetLoader.getInstance()
-  await assetLoader.init('/img/kudamono/')
-
-  // Game を初期化
-  game = await Game.create('kudamono-canvas', WIDTH, HEIGHT)
-  assetLoader.setRenderer(game.getApp().renderer)
+  // Game と AssetLoader を初期化
+  ;({ game, assetLoader } = await GameFactory.createGame('kudamono-canvas', WIDTH, HEIGHT, {
+    backgroundColor: 0x999999,
+    assetBasePath: '/img/kudamono/',
+  }))
 
   // スプライトシート読み込み
   await Promise.all([
