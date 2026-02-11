@@ -1,0 +1,8 @@
+{
+  "animations": {
+    "stand": {"fps": 0, "loop": false},
+    "walk": {"fps": 6, "loop": true},
+    "dying": {"fps": 0, "loop": false},
+    "died": {"fps": 0, "loop": false}
+  }
+}

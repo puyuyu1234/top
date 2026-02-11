@@ -1,0 +1,18 @@
+{
+  "frames": {
+    "player_0": {"frame": {"x": 0, "y": 0, "w": 24, "h": 32}},
+    "player_1": {"frame": {"x": 24, "y": 0, "w": 24, "h": 32}},
+    "player_2": {"frame": {"x": 48, "y": 0, "w": 24, "h": 32}},
+    "player_3": {"frame": {"x": 72, "y": 0, "w": 24, "h": 32}}
+  },
+  "animations": {
+    "stand": ["player_0"],
+    "walk": ["player_0", "player_1"],
+    "dying": ["player_2"],
+    "died": ["player_3"]
+  },
+  "meta": {
+    "image": "player.png",
+    "scale": "1"
+  }
+}

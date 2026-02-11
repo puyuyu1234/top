@@ -1,0 +1,17 @@
+{
+  "frames": {
+    "entity_0": {"frame": {"x": 0, "y": 0, "w": 16, "h": 16}},
+    "entity_1": {"frame": {"x": 16, "y": 0, "w": 16, "h": 16}},
+    "entity_2": {"frame": {"x": 32, "y": 0, "w": 16, "h": 16}},
+    "entity_3": {"frame": {"x": 48, "y": 0, "w": 16, "h": 16}}
+  },
+  "animations": {
+    "apple": ["entity_0"],
+    "bomb": ["entity_1"],
+    "tree": ["entity_2"]
+  },
+  "meta": {
+    "image": "entity.png",
+    "scale": "1"
+  }
+}
