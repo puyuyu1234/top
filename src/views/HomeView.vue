@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { RouterLink } from 'vue-router'
+import { RouterLink } from "vue-router";
 
-const buildDate = __BUILD_DATE__
+const buildDate = __BUILD_DATE__;
 </script>
 
 <template>
@@ -42,7 +42,7 @@ const buildDate = __BUILD_DATE__
 
     <h2>メモ</h2>
     <ul class="pl-8">
-    <li><RouterLink to="/page2" class="text-transparent!">隠しページ</RouterLink></li>
+      <li><RouterLink to="/page2" class="text-transparent!">隠しページ</RouterLink></li>
     </ul>
     <span class="text-sm text-gray-500">（最終更新: {{ buildDate }}）</span>
   </div>

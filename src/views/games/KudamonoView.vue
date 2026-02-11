@@ -1,27 +1,27 @@
 <script setup lang="ts">
-import { onMounted, onUnmounted, ref } from 'vue'
-import type { Game } from '@puyuyu1234/ptre'
-import { startGame, getGame } from '@/games/kudamono'
+import { onMounted, onUnmounted, ref } from "vue";
+import type { Game } from "@puyuyu1234/ptre";
+import { startGame, getGame } from "@/games/kudamono";
 
-const containerRef = ref<HTMLDivElement>()
-let game: Game | null = null
+const containerRef = ref<HTMLDivElement>();
+let game: Game | null = null;
 
 // モバイルコントロール用（ptreのInputを使用）
-const onLeftDown = () => getGame()?.getInput().setKeyPressed('ArrowLeft')
-const onLeftUp = () => getGame()?.getInput().setKeyReleased('ArrowLeft')
-const onRightDown = () => getGame()?.getInput().setKeyPressed('ArrowRight')
-const onRightUp = () => getGame()?.getInput().setKeyReleased('ArrowRight')
+const onLeftDown = (): void => getGame().getInput().setKeyPressed("ArrowLeft");
+const onLeftUp = (): void => getGame().getInput().setKeyReleased("ArrowLeft");
+const onRightDown = (): void => getGame().getInput().setKeyPressed("ArrowRight");
+const onRightUp = (): void => getGame().getInput().setKeyReleased("ArrowRight");
 
 onMounted(async () => {
   if (containerRef.value) {
-    game = await startGame(containerRef.value)
+    game = await startGame(containerRef.value);
   }
-})
+});
 
 onUnmounted(() => {
-  game?.stop()
-  game = null
-})
+  game?.stop();
+  game = null;
+});
 </script>
 
 <template>

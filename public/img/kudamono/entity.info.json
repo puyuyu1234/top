@@ -1,7 +1,7 @@
 {
   "animations": {
-    "apple": {"fps": 0, "loop": false},
-    "bomb": {"fps": 0, "loop": false},
-    "tree": {"fps": 0, "loop": false}
+    "apple": { "fps": 0, "loop": false },
+    "bomb": { "fps": 0, "loop": false },
+    "tree": { "fps": 0, "loop": false }
   }
 }
