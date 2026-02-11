@@ -9,7 +9,7 @@ importers:
   .:
     dependencies:
       '@puyuyu1234/ptre':
-        specifier: github:puyuyu1234/ptre
+        specifier: https://github.com/puyuyu1234/ptre
         version: git+https://git@github.com:puyuyu1234/ptre.git#cedf2d2df0e4d525d161aea50ef609f85cfb657b(pixi.js@8.16.0)
       pixi.js:
         specifier: ^8.16.0
