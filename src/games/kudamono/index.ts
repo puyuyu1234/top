@@ -21,10 +21,12 @@ export async function startGame(container: HTMLElement): Promise<Game> {
   canvas.id = "kudamono-canvas";
   container.appendChild(canvas);
 
+  const base = import.meta.env.BASE_URL;
+
   // Game と AssetLoader を初期化
   ({ game, assetLoader } = await GameFactory.createGame("kudamono-canvas", WIDTH, HEIGHT, {
     backgroundColor: 0x999999,
-    assetBasePath: "/img/kudamono/",
+    assetBasePath: `${base}img/kudamono/`,
   }));
 
   // スプライトシート読み込み
@@ -34,8 +36,8 @@ export async function startGame(container: HTMLElement): Promise<Game> {
   ]);
 
   // フォント読み込み
-  const p10 = new FontFace("p10", "url(/font/PixelMplus10-Regular.ttf)");
-  const p12 = new FontFace("p12", "url(/font/PixelMplus12-Regular.ttf)");
+  const p10 = new FontFace("p10", `url(${base}fonts/PixelMplus10-Regular.ttf)`);
+  const p12 = new FontFace("p12", `url(${base}fonts/PixelMplus12-Regular.ttf)`);
   await Promise.all([p10.load(), p12.load()]);
   document.fonts.add(p10);
   document.fonts.add(p12);
