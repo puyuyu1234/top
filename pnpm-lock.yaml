@@ -10,7 +10,7 @@ importers:
     dependencies:
       '@puyuyu1234/ptre':
         specifier: github:puyuyu1234/ptre
-        version: git+https://git@github.com:puyuyu1234/ptre.git#953ece0459cd5fb9b96a20302c1a44f50d218dc4(pixi.js@8.16.0)
+        version: git+https://git@github.com:puyuyu1234/ptre.git#cedf2d2df0e4d525d161aea50ef609f85cfb657b(pixi.js@8.16.0)
       pixi.js:
         specifier: ^8.16.0
         version: 8.16.0
@@ -309,8 +309,8 @@ packages:
   '@pixi/colord@2.9.6':
     resolution: {integrity: sha512-nezytU2pw587fQstUu1AsJZDVEynjskwOL+kibwcdxsMBFqPsFFNA7xl0ii/gXuDi6M0xj3mfRJj8pBSc2jCfA==}
 
-  '@puyuyu1234/ptre@git+https://git@github.com:puyuyu1234/ptre.git#953ece0459cd5fb9b96a20302c1a44f50d218dc4':
-    resolution: {commit: 953ece0459cd5fb9b96a20302c1a44f50d218dc4, repo: git@github.com:puyuyu1234/ptre.git, type: git}
+  '@puyuyu1234/ptre@git+https://git@github.com:puyuyu1234/ptre.git#cedf2d2df0e4d525d161aea50ef609f85cfb657b':
+    resolution: {commit: cedf2d2df0e4d525d161aea50ef609f85cfb657b, repo: git@github.com:puyuyu1234/ptre.git, type: git}
     version: 0.2.0
     peerDependencies:
       pixi.js: ^8.0.0
@@ -1459,7 +1459,7 @@ snapshots:
 
   '@pixi/colord@2.9.6': {}
 
-  '@puyuyu1234/ptre@git+https://git@github.com:puyuyu1234/ptre.git#953ece0459cd5fb9b96a20302c1a44f50d218dc4(pixi.js@8.16.0)':
+  '@puyuyu1234/ptre@git+https://git@github.com:puyuyu1234/ptre.git#cedf2d2df0e4d525d161aea50ef609f85cfb657b(pixi.js@8.16.0)':
     dependencies:
       pixi.js: 8.16.0
 

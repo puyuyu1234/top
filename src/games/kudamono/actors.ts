@@ -1,10 +1,11 @@
-import { Graphics, TextStyle, Sprite } from "pixi.js";
+import { TextStyle, Sprite } from "pixi.js";
 import {
   AnimatedSpriteActor,
   TextActor,
   ContainerActor,
   AssetLoader,
   ActorBehavior,
+  GraphicsActor,
 } from "@puyuyu1234/ptre";
 import { WIDTH, HEIGHT, getGame } from "./index";
 import type { BaseScene } from "./scenes";
@@ -241,31 +242,20 @@ export class Bomb extends FallingEntity {
   }
 }
 
-// パーティクル（Graphicsベース - ptreにGraphicsActorがないため）
-export class Particle extends Graphics {
-  readonly behavior = new ActorBehavior(["particle"]);
+// パーティクル
+export class Particle extends GraphicsActor {
   vx: number;
   vy: number;
   time = 0;
 
   constructor(x: number, y: number, vx: number, vy: number) {
-    super();
+    super(x, y, ["particle"]);
     this.rect(0, 0, 1, 1).fill(0x000000);
-    this.x = x;
-    this.y = y;
     this.vx = vx;
     this.vy = vy;
   }
 
-  hasTag(tag: string): boolean {
-    return this.behavior.hasTag(tag);
-  }
-
-  get isDestroyed(): boolean {
-    return this.behavior.isDestroyed;
-  }
-
-  public tick(): void {
+  public override tick(): void {
     this.time++;
     if (this.time > 10) {
       this.vx *= 0.6;
@@ -275,11 +265,6 @@ export class Particle extends Graphics {
     }
     this.x += this.vx;
     this.y += this.vy;
-  }
-
-  public override destroy(): void {
-    this.behavior.destroy();
-    super.destroy();
   }
 }
 
@@ -343,29 +328,10 @@ export class GameText extends TextActor {
   }
 }
 
-// 矩形（Graphicsベース - ptreにGraphicsActorがないため）
-export class RectActor extends Graphics {
-  readonly behavior = new ActorBehavior(["rect"]);
-
+// 矩形
+export class RectActor extends GraphicsActor {
   constructor(x: number, y: number, width: number, height: number, color: number) {
-    super();
+    super(x, y, ["rect"]);
     this.rect(0, 0, width, height).fill(color);
-    this.x = x;
-    this.y = y;
-  }
-
-  hasTag(tag: string): boolean {
-    return this.behavior.hasTag(tag);
-  }
-
-  get isDestroyed(): boolean {
-    return this.behavior.isDestroyed;
-  }
-
-  public tick(): void {}
-
-  public override destroy(): void {
-    this.behavior.destroy();
-    super.destroy();
   }
 }
