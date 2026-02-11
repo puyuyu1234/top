@@ -4,66 +4,94 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-This is a personal website ("こふらルーム") containing static HTML pages, mini-games, and web tools. The site is purely static with no build system or package manager.
+Personal website "こふらルーム" built with Vue 3 + TypeScript + Vite. Contains mini-games, tools, and content pages. Games use a custom Canvas-based engine (currently in legacy JS, migration to TypeScript in progress).
+
+## Commands
+
+```bash
+pnpm dev          # Start development server (http://localhost:5173/)
+pnpm build        # Production build
+pnpm preview      # Preview production build
+
+# For GitHub Pages deployment with subdirectory:
+VITE_BASE=/top/ pnpm build
+```
 
 ## Architecture
 
-### Game Engine (`engine/`)
+### Vue Application (`src/`)
 
-A custom 2D game engine written in vanilla JavaScript with Canvas API:
+- **main.ts** - App entry point
+- **App.vue** - Root component with navigation header
+- **router/index.ts** - Vue Router configuration
+- **views/** - Page components (HomeView, games, tools, etc.)
+- **assets/style.css** - Global styles
 
-- **engine.js / engine2.js** - Two versions of the engine with the following core classes:
-  - `Game` - Main game loop with fixed timestep (60fps default), handles canvas creation and scene management
-  - `Scene` / `Container` - Scene graph system with parent-child relationships
-  - `Actor` - Base entity class with position, scale, alpha, tags, and trait system
-  - `SpriteActor` / `RectActor` / `TextActor` - Renderable actor types
-  - `Trait` - Component system for adding behaviors to actors (e.g., `SpriteAnimationTrait`)
-  - `Camera` - Viewport with scroll and rotation support
-  - `Input` - Keyboard and pointer input handling with press duration tracking
-  - `ImageManager` / `SoundManager` - Asset loading and management (global `images` and `sounds` instances)
+### Legacy Game Engine (`public/legacy/engine/`)
 
-### Games
+Custom 2D Canvas game engine (vanilla JS). Core classes:
+- `Game` - Main loop (60fps), canvas management, scene switching
+- `Scene` / `Container` - Scene graph with parent-child relationships
+- `Actor` - Base entity with position, scale, alpha, traits
+- `SpriteActor` / `RectActor` / `TextActor` - Renderable types
+- `Trait` - Component system (e.g., `SpriteAnimationTrait`)
+- `Camera` / `Input` - Viewport and input handling
+- `ImageManager` / `SoundManager` - Asset loading (global `images`, `sounds`)
 
-Each game lives in its own directory with `index.html`, `main.js`, and `style.css`:
+### Legacy Games (`public/legacy/`)
 
-- **imomushi/** - Caterpillar platformer using the engine. Uses `param.js` for stage data and block definitions
-- **kudamono/** - Fruit catching game with falling entities and collision detection
-- **tulipTrade/** - Tulip trading simulation (uses Chart.js)
-- **homo/** - Simple diagnostic quiz
+Games loaded dynamically via script injection from Vue components:
+- **imomushi/** - Caterpillar platformer with thread mechanics
+- **kudamono/** - Fruit catching game
 
-### Tools
+### Base URL Handling
 
-- **aa2picture/** - ASCII art to image converter using Canvas API and custom fonts
-
-### Fonts (`font/`)
-
-Pixel Mplus fonts (10pt and 12pt) used across games for retro text rendering.
-
-## Development
-
-No build step required. Open HTML files directly in a browser or serve with any static file server:
-
-```bash
-# Using Python
-python -m http.server 8000
-
-# Using Node.js
-npx serve .
+For GitHub Pages compatibility, legacy JS uses `window.__BASE_URL__`:
+```js
+const BASE = window.__BASE_URL__ ?? '';
+images.add("player", `${BASE}/img/game/sprite.gif`);
 ```
 
-## Game Engine Patterns
+Vue components set this before loading legacy scripts:
+```ts
+const BASE = import.meta.env.BASE_URL.replace(/\/$/, '')
+;(window as any).__BASE_URL__ = BASE
+```
 
-When creating new games using the engine:
+### Assets (`public/`)
 
-1. **Image Loading**: Register images with `images.add("name", "path")`, then call `await images.loadAll()` before game start
-2. **Scene Creation**: Extend `Scene` class, add actors with `actor.addTo(this)`
-3. **Game Loop**: Create `Game(width, height)`, call `game.changeScene(scene)`, then `game.start()`
-4. **Input Handling**: Use `input.get("key")` which returns duration (positive = pressed, negative = released)
-5. **Sprite Animation**: Add `SpriteAnimationTrait` to `SpriteActor`, define frames with `SpriteAnimation`
-6. **Collision**: Use `Rectangle.isIntersect()` for AABB collision detection
+- **fonts/** - PixelMplus (10pt, 12pt), Saitamaar
+- **img/** - Game sprites organized by game name
+- **legacy/** - Legacy JS files (engine, games)
 
-## File Structure Notes
+## Patterns
 
-- Games reference engine with relative paths like `../engine/engine2.js`
-- Images stored in `img/[game-name]/`
-- External projects (tulipclicker, soukoban, etc.) are in sibling directories outside this repo
+### Adding a New Vue Page
+1. Create component in `src/views/`
+2. Add route in `src/router/index.ts`
+3. Link from HomeView or navigation
+
+### Loading Legacy Games in Vue
+```vue
+<script setup lang="ts">
+const BASE = import.meta.env.BASE_URL.replace(/\/$/, '')
+const loadScript = (src: string) => { /* ... */ }
+
+onMounted(async () => {
+  ;(window as any).__BASE_URL__ = BASE
+  await loadScript('/legacy/engine/engine2.js')
+  await loadScript('/legacy/game/main.js')
+})
+</script>
+<template>
+  <div id="canvas-container"></div>
+</template>
+```
+
+## Migration Status
+
+Vue + TS migration in progress:
+- [x] Vue project setup with Vite
+- [x] Legacy games wrapped in Vue components
+- [ ] Game engine TypeScript conversion
+- [ ] Individual games TypeScript conversion
