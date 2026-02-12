@@ -12,6 +12,17 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Noto+Sans+JP:400" />
   </head>
   <body>
+    <script>
+      // SPA redirect hack for GitHub Pages
+      // https://github.com/rafgraph/spa-github-pages
+      (function () {
+        var redirect = sessionStorage.redirect;
+        delete sessionStorage.redirect;
+        if (redirect && redirect !== location.pathname.slice(1)) {
+          history.replaceState(null, null, "/" + redirect);
+        }
+      })();
+    </script>
     <div id="app"></div>
     <script type="module" src="/src/main.ts"></script>
   </body>

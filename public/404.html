@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Redirecting...</title>
+    <script>
+      // SPA redirect hack for GitHub Pages
+      // https://github.com/rafgraph/spa-github-pages
+      var pathSegmentsToKeep = 1; // /top/ の部分を保持
+      var l = window.location;
+      sessionStorage.redirect =
+        l.pathname.slice(1) + l.search + l.hash;
+      l.replace(
+        l.protocol +
+          "//" +
+          l.host +
+          l.pathname
+            .split("/")
+            .slice(0, 1 + pathSegmentsToKeep)
+            .join("/") +
+          "/"
+      );
+    </script>
+  </head>
+  <body>
+    Redirecting...
+  </body>
+</html>
