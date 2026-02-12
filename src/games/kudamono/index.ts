@@ -35,12 +35,11 @@ export async function startGame(container: HTMLElement): Promise<Game> {
     assetLoader.loadSpritesheet("entity", "entity.json"),
   ]);
 
-  // フォント読み込み
-  const p10 = new FontFace("p10", `url(${base}fonts/PixelMplus10-Regular.ttf)`);
-  const p12 = new FontFace("p12", `url(${base}fonts/PixelMplus12-Regular.ttf)`);
-  await Promise.all([p10.load(), p12.load()]);
-  document.fonts.add(p10);
-  document.fonts.add(p12);
+  // ビットマップフォント読み込み
+  await Promise.all([
+    assetLoader.loadBitmapFont("p10", `${base}fonts/PixelMplus10.fnt`),
+    assetLoader.loadBitmapFont("p12", `${base}fonts/PixelMplus12.fnt`),
+  ]);
 
   // シーン開始
   const scene = new TitleScene();

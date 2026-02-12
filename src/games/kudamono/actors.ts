@@ -1,7 +1,7 @@
-import { TextStyle, Sprite } from "pixi.js";
+import { Sprite } from "pixi.js";
 import {
   AnimatedSpriteActor,
-  TextActor,
+  BitmapTextActor,
   ContainerActor,
   AssetLoader,
   ActorBehavior,
@@ -317,14 +317,10 @@ export class Tree extends ContainerActor {
 }
 
 // テキスト
-export class GameText extends TextActor {
+export class GameText extends BitmapTextActor {
   constructor(text: string, x: number, y: number, fontSize: number, fontFamily = "p12") {
-    const style: Partial<TextStyle> = {
-      fontFamily,
-      fontSize,
-      fill: 0x000000,
-    };
-    super(text, x, y, ["text"], 0, 0, style);
+    super(text, x, y, fontFamily, ["text"], 0, 0, fontSize);
+    this.tint = 0x000000; // 黒色
   }
 }
 
