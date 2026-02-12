@@ -10,12 +10,12 @@ const router = createRouter({
       component: HomeView,
     },
     {
-      path: "/games/kudamono",
+      path: "/kudamono",
       name: "kudamono",
       component: () => import("@/views/games/KudamonoView.vue"),
     },
     {
-      path: "/tools/aa2picture",
+      path: "/aa2picture",
       name: "aa2picture",
       component: () => import("@/views/tools/Aa2PictureView.vue"),
     },
