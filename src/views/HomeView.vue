@@ -24,7 +24,7 @@ const buildDate = __BUILD_DATE__;
     <ul class="pl-8">
       <li><a href="../botanobuilder/index.html">botanobuilder</a></li>
       <li><a href="../botanobuilder/easy.html">botanobuilder（簡易版）</a></li>
-      <li><RouterLink to="/tools/aa2picture">AA画像化</RouterLink></li>
+      <li><RouterLink to="/aa2picture">AA画像化</RouterLink></li>
       <li><a href="../sorede/index.html">それで？bot</a></li>
     </ul>
 

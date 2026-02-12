@@ -10,7 +10,7 @@ import { RouterLink } from "vue-router";
 
       <h2>制作物</h2>
       <ul class="pl-8">
-        <li><RouterLink to="/games/kudamono">kudamono</RouterLink></li>
+        <li><RouterLink to="/kudamono">kudamono</RouterLink></li>
       </ul>
     </div>
   </div>
