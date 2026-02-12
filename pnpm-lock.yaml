@@ -9,8 +9,8 @@ importers:
   .:
     dependencies:
       '@puyuyu1234/ptre':
-        specifier: link:../ptre
-        version: link:../ptre
+        specifier: git+ssh://git@github.com/puyuyu1234/ptre.git
+        version: git+https://git@github.com:puyuyu1234/ptre.git#87be4bef6faa9ab563a03bf1506373d18c31d451(pixi.js@8.16.0)
       pixi.js:
         specifier: ^8.16.0
         version: 8.16.0
@@ -311,6 +311,16 @@ packages:
 
   '@pixi/colord@2.9.6':
     resolution: {integrity: sha512-nezytU2pw587fQstUu1AsJZDVEynjskwOL+kibwcdxsMBFqPsFFNA7xl0ii/gXuDi6M0xj3mfRJj8pBSc2jCfA==}
+
+  '@puyuyu1234/ptre@git+https://git@github.com:puyuyu1234/ptre.git#87be4bef6faa9ab563a03bf1506373d18c31d451':
+    resolution: {commit: 87be4bef6faa9ab563a03bf1506373d18c31d451, repo: git@github.com:puyuyu1234/ptre.git, type: git}
+    version: 0.2.0
+    peerDependencies:
+      pixi.js: ^8.0.0
+      tone: ^14.0.0 || ^15.0.0
+    peerDependenciesMeta:
+      tone:
+        optional: true
 
   '@rollup/rollup-android-arm-eabi@4.57.1':
     resolution: {integrity: sha512-A6ehUVSiSaaliTxai040ZpZ2zTevHYbvu/lDoeAteHI8QnaosIzm4qwtezfRg1jOYaUmnzLX1AOD6Z+UJjtifg==}
@@ -1457,6 +1467,10 @@ snapshots:
       '@jridgewell/sourcemap-codec': 1.5.5
 
   '@pixi/colord@2.9.6': {}
+
+  '@puyuyu1234/ptre@git+https://git@github.com:puyuyu1234/ptre.git#87be4bef6faa9ab563a03bf1506373d18c31d451(pixi.js@8.16.0)':
+    dependencies:
+      pixi.js: 8.16.0
 
   '@rollup/rollup-android-arm-eabi@4.57.1':
     optional: true
