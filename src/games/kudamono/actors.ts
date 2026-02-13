@@ -212,10 +212,11 @@ export class Bomb extends FallingEntity {
 
   public override tick(): void {
     if (this.isHit) {
+      if (!this.playerRef || !this.sceneRef) return;
       if (this.time === 30) {
         // 30フレームで爆発エフェクト
-        const player = this.playerRef!;
-        const scene = this.sceneRef!;
+        const player = this.playerRef;
+        const scene = this.sceneRef;
         for (let i = 0; i < 100; i++) {
           scene.addParticle(
             this.x + this.width / 2 + (Math.random() * 2 - 1) * 4,
@@ -233,7 +234,7 @@ export class Bomb extends FallingEntity {
         this.x = -10000; // 画面外に移動
       } else if (this.time === 60) {
         // 60フレームでゲームオーバー
-        this.sceneRef!.showGameOver();
+        this.sceneRef.showGameOver();
       }
       this.time++;
       return;

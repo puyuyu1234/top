@@ -43,7 +43,7 @@ export class TitleScene extends BaseScene {
 
     // クリックイベント
     this.container.eventMode = "static";
-    (this.container as any).on("pointerdown", () => {
+    this.container.on("pointerdown", () => {
       this.clicked = true;
     });
   }
@@ -163,7 +163,7 @@ export class MainScene extends BaseScene {
     this.container.addChild(restartText);
 
     // リスタート用クリックイベント
-    (this.container as any).on("pointerdown", () => {
+    this.container.on("pointerdown", () => {
       this.changeScene(new MainScene());
     });
   }
